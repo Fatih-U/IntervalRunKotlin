@@ -240,10 +240,6 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
             }.build()
     }
 
-    /**
-     * @TO DO: save activity details in room database
-     */
-    //@InternalCoroutinesApi
     @InternalCoroutinesApi
     private fun saveActivity() {
 
