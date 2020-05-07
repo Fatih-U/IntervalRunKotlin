@@ -100,32 +100,19 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
 
         btnStartStop.onSwipedOffListener = {
 
-            /**
-             * Mesafe hesaplaniyor
-             *
-             */
-            var startLoc = Location("")
-            var endLoc = Location("")
-            //var distance = 0.0f
-            //var ellapsedTime: Long = 0
+            //assigning end time to running activity on stop clicked
+            endTimeInMillis = System.currentTimeMillis()
 
-
+            //calculating total distance
             if (pathPoints.isNotEmpty()) {
-
-                startLoc.latitude = pathPoints.first().latitude
-                startLoc.longitude = pathPoints.first().longitude
-                endLoc.latitude = pathPoints.last().latitude
-                endLoc.longitude = pathPoints.last().longitude
-
-                //distance = startLoc.distanceTo(endLoc) //sonuc metre olarak doner
                 calculateTotalDistance(pathPoints)
             }
 
-            //ellapsedTime = SystemClock.elapsedRealtime() - chronometer.base
+            //stopping chronometer counter and tracking on stop clicked
             chronometer.stop()
             isChronoRunning = false
-            //Toast.makeText(this, "Mesafe : "+ "%.2f".format(distance) + " metre" + "Sure : $ellapsedTime", Toast.LENGTH_LONG).show()
 
+            //stopping tracking and adding marker to map on stop clicked
             if (isTracking) {
                 isTracking = false
                 if (pathPoints.isNotEmpty()){
@@ -135,11 +122,11 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
                     googleMap.addMarker(MarkerOptions().position(pathPoints.last()).title("Bitiş"))
                 }
 
+                //removing locationmanager listener
                 locationManager.removeUpdates(this)
             }
 
             //Alert dialog gelecek
-            endTimeInMillis = System.currentTimeMillis()
             showSaveDialog()
         }
 
@@ -231,8 +218,13 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
             .isCancellable(true)
             .setIcon(R.drawable.ic_action_completed,Icon.Visible)
             .OnPositiveClicked {
-
-                saveActivity()
+                if(pathPoints.isNotEmpty()) {
+                    saveActivity()
+                }
+                else {
+                    Toast.makeText(this, "Activity has no values to be saved.", Toast.LENGTH_SHORT).show()
+                    this.finish()
+                }
             }
             .OnNegativeClicked {
                 Toast.makeText(this, "Activity wont be saved.", Toast.LENGTH_SHORT).show()
@@ -257,26 +249,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
             }
         }
 
-        /**
-         * This is for test purpose:
-         * Retrieving all RunActivity objects and printing data as error log.
-         * @TODO : Delete this launch code block
-
-        launch {
-            this@MapsActivity.let {
-                var runs = RunDatabase(it).getRunActivityDAO().getRunActivities()
-                runs.forEach {
-                    Log.e("ACTIVITIES","RUN ID : ${it.id} / START TIME = ${it.startTimeMilli}  / END TIME : ${it.endTimeMilli} / PATH POINT SIZE: ${it.pathPoints.size}")
-                }
-            }
-        }*/
-
-        Log.e("DETAILS","${runActivity.startTimeMilli} || ${runActivity.endTimeMilli}  || ${runActivity.pathPoints.size}")
-        var startTimeString = convertLongToDateString(runActivity.startTimeMilli!!)
-        var endTimeString = convertLongToDateString(runActivity.endTimeMilli!!)
-        var runningDistance = calculateDistance(runActivity.pathPoints)
-        Log.e("DETAILS2","Start Time : $startTimeString , End Time : $endTimeString, Total Distance : ${runningDistance}")
-
+        //Returning to home page when activity save is successfull
         val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
         this.finish()
@@ -291,8 +264,6 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
         var endLoc = Location("")
         var totalDistance = 0.0f
         var currentPoint = pathPoints.first()
-        //startLoc.latitude = currentPoint.latitude
-        //startLoc.longitude = currentPoint.longitude
 
         for (point in pathPoints) {
             Log.e("LOCATTION","${point.latitude},${point.longitude}")
