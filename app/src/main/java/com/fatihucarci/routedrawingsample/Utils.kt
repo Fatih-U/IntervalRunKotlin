@@ -41,6 +41,11 @@ fun convertLongToSimpleString(systemTime: Long) : String {
         .format(systemTime).toString()
 }
 
+
+/**
+ * Calculating total distance of running path in meters
+ * Baslangic noktasindan itibaren kosulan yolun uzunlugu metre olarak hesaplaniyor
+ */
 fun calculateDistance(pathPoints: MutableList<LatLng>) : Float {
     var totalDistance = 0.0f
     var startLoc = Location("")
