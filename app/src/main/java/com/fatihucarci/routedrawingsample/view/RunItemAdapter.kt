@@ -1,9 +1,13 @@
 package com.fatihucarci.routedrawingsample.view
 
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.fatihucarci.routedrawingsample.*
 import com.fatihucarci.routedrawingsample.room.RunActivity
@@ -39,6 +43,20 @@ class RunItemAdapter(private val runList: List<RunActivity>) : RecyclerView.Adap
         holder.tvDistance.text = "%.2f".format(calculateDistance(currentRunActivity.pathPoints)/1000) + " km"
         holder.tvDuration.text = calculateDuration(currentRunActivity)
         holder.tvRunDate.text = convertLongToSimpleString(currentRunActivity.startTimeMilli!!)
+
+
+        //Opening run item details in new Activity on click item
+        holder.itemView.setOnClickListener {
+            val id = currentRunActivity.id.toString()
+            //Toast.makeText(it.context, "$id clicked!",Toast.LENGTH_SHORT).show()
+            Log.e("CLICKLISTENER","$id clicked")
+            val intent = Intent(it.context,RunDetailActivity::class.java)
+            intent.putExtra("RunID",currentRunActivity.id)
+            it.context.startActivity(intent)
+        }
+
+
+
 
     }
 
