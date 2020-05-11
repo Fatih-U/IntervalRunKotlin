@@ -27,4 +27,7 @@ interface RunActivityDAO {
 
     @Query("SELECT * FROM table_runactivity ORDER BY start_time DESC LIMIT 4")
     suspend fun getRecentRunActivities(): List<RunActivity>
+
+    @Query("SELECT * from table_runactivity where id= :runId")
+    suspend fun getRun(runId: Int) : RunActivity
 }
