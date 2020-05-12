@@ -1,5 +1,6 @@
 package com.fatihucarci.routedrawingsample
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,6 +20,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 
 class RunDetailActivity : BaseActivity(), OnMapReadyCallback {
+
 
     private lateinit var googleMap: GoogleMap
 
@@ -87,13 +89,16 @@ class RunDetailActivity : BaseActivity(), OnMapReadyCallback {
         googleMap.addMarker(
             MarkerOptions()
                 .position(runItem?.pathPoints?.first()!!)
+                .icon(bitmapDescriptorFromVector(this,R.drawable.ic_startmarker))
+                //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+
             //.title("Başlangıç")
         )
 
         googleMap.addMarker(
             MarkerOptions()
                 .position(runItem.pathPoints.last())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                .icon(bitmapDescriptorFromVector(this,R.drawable.ic_endmarker))
             //.title("Bitiş")
         )
 
