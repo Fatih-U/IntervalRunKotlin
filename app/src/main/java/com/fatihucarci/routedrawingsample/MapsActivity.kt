@@ -37,8 +37,8 @@ import kotlinx.coroutines.launch
 
 
 const val REQUEST_CODE_LOCATION_PERMISSION = 0
-const val POLYLINE_WIDTH = 16f
-const val MAP_ZOOM = 18f
+const val POLYLINE_WIDTH = 14f
+const val MAP_ZOOM = 16f
 const val TAG = "@ROUTEDRAWING"
 
 class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
@@ -51,10 +51,11 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
     private var isTracking = false
     private var isChronoRunning = false
 
-    private lateinit var chronometer:Chronometer
+    private lateinit var chronometer: Chronometer
 
     //Polyline points list:
     private val pathPoints = mutableListOf<LatLng>()
+
     //Running start & end time in milliseconds
     private var startTimeMillis: Long = 0
     private var endTimeInMillis: Long = 0
@@ -115,11 +116,20 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
             //stopping tracking and adding marker to map on stop clicked
             if (isTracking) {
                 isTracking = false
-                if (pathPoints.isNotEmpty()){
-                    googleMap.addMarker(MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                        .position(pathPoints.first()).title("Başlangıç"))
-                    googleMap.addMarker(MarkerOptions().position(pathPoints.last()).title("Bitiş"))
+                if (pathPoints.isNotEmpty()) {
+                    googleMap.addMarker(
+                        MarkerOptions()
+                            .icon(bitmapDescriptorFromVector(this, R.drawable.ic_startmarker))
+                            .position(pathPoints.first()).title("Başlangıç")
+                    )
+                    googleMap.addMarker(
+                        MarkerOptions().icon(
+                            bitmapDescriptorFromVector(
+                                this,
+                                R.drawable.ic_endmarker
+                            )
+                        ).position(pathPoints.last()).title("Bitiş")
+                    )
                 }
 
                 //removing locationmanager listener
@@ -216,13 +226,13 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
             .setPositiveBtnBackground(Color.parseColor("#FF4081"))
             .setAnimation(Animation.POP)
             .isCancellable(true)
-            .setIcon(R.drawable.ic_action_completed,Icon.Visible)
+            .setIcon(R.drawable.ic_action_completed, Icon.Visible)
             .OnPositiveClicked {
-                if(pathPoints.isNotEmpty()) {
+                if (pathPoints.isNotEmpty()) {
                     saveActivity()
-                }
-                else {
-                    Toast.makeText(this, "Activity has no values to be saved.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Activity has no values to be saved.", Toast.LENGTH_SHORT)
+                        .show()
                     this.finish()
                 }
             }
@@ -238,7 +248,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
         Toast.makeText(this, "Saving activity", Toast.LENGTH_SHORT).show()
 
 
-        var runActivity = RunActivity(startTimeMillis,endTimeInMillis,pathPoints)
+        var runActivity = RunActivity(startTimeMillis, endTimeInMillis, pathPoints)
 
         /**
          * Inserting RunActivity object to database
@@ -250,7 +260,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
         }
 
         //Returning to home page when activity save is successfull
-        val intent = Intent(this,MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         this.finish()
     }
@@ -266,8 +276,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
         var currentPoint = pathPoints.first()
 
         for (point in pathPoints) {
-            Log.e("LOCATTION","${point.latitude},${point.longitude}")
-            if(point != pathPoints.first()) {
+            Log.e("LOCATTION", "${point.latitude},${point.longitude}")
+            if (point != pathPoints.first()) {
                 startLoc.latitude = currentPoint.latitude
                 startLoc.longitude = currentPoint.longitude
                 endLoc.latitude = point.latitude
@@ -276,8 +286,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
                 currentPoint = point
             }
         }
-        Log.e("TOTALDISTANCE",totalDistance.toString())
-
+        Log.e("TOTALDISTANCE", totalDistance.toString())
 
 
     }
@@ -309,7 +318,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
         googleMap.isMyLocationEnabled = true
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location!=null) {
+            if (location != null) {
                 lastLocation = location
                 val currentLatLng = LatLng(location.latitude, location.longitude)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, MAP_ZOOM))
@@ -362,7 +371,6 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, MAP_ZOOM))
 
 
-
         }
     }
 
@@ -381,7 +389,11 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_CODE_LOCATION_PERMISSION -> {
@@ -393,11 +405,10 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
     }
 
 
-
     private fun isLocationEnabled(mContext: Context): Boolean {
         val lm = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val result = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        Log.e(TAG,"LOCATIONPROVIDERENABLED : ${result}")
+        Log.e(TAG, "LOCATIONPROVIDERENABLED : ${result}")
         return result
         //|| lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
@@ -411,7 +422,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback, LocationListener {
                 startActivity(myIntent)
             }
             .setNegativeButton("Cancel") { paramDialogInterface, paramInt ->
-                val intent = Intent(this,MainActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 this.finish()
             }
