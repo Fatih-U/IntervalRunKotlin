@@ -1,8 +1,14 @@
 package com.fatihucarci.routedrawingsample
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.location.Location
+import androidx.core.content.ContextCompat
 import com.fatihucarci.routedrawingsample.room.RunActivity
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import java.text.SimpleDateFormat
 
@@ -21,9 +27,12 @@ import java.text.SimpleDateFormat
  */
 fun calculateDuration(runItem: RunActivity) : String {
 
-    var hours = "%02d".format(runItem.endTimeMilli!!.minus(runItem.startTimeMilli!!)/1000/60/60)
-    var minutes = "%02d".format(runItem.endTimeMilli!!.minus(runItem.startTimeMilli!!)/1000/60)
-    var seconds = "%02d".format(runItem.endTimeMilli!!.minus(runItem.startTimeMilli!!)/1000)
+    var diff = runItem.endTimeMilli!!.minus(runItem.startTimeMilli!!)
+
+
+    var hours = "%02d".format(diff/(3600*1000))
+    var minutes = "%02d".format(diff/(60*1000) % 60)
+    var seconds = "%02d".format(diff/1000 % 60)
 
     return "$hours:$minutes:$seconds"
 }
@@ -66,4 +75,16 @@ fun calculateDistance(pathPoints: MutableList<LatLng>) : Float {
     }
 
     return totalDistance
+}
+
+/**
+ *
+ */
+fun  bitmapDescriptorFromVector(context: Context, vectorResId:Int): BitmapDescriptor {
+    var vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+    vectorDrawable!!.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+    var bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+    var canvas =  Canvas(bitmap);
+    vectorDrawable.draw(canvas);
+    return BitmapDescriptorFactory.fromBitmap(bitmap);
 }
