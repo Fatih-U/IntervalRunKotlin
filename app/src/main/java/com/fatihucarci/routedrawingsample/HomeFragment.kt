@@ -44,7 +44,7 @@ class HomeFragment : BaseFragment() {
         // Inflate the layout for this fragment
         launch {
             this@HomeFragment.let {
-                var runList = RunDatabase(context!!).getRunActivityDAO().getRunActivities()
+                var runList = RunDatabase(context!!).getRunActivityDAO().getRecentRunActivities()
                 rv_run_list.adapter = RunItemAdapter(runList)
             }
         }
